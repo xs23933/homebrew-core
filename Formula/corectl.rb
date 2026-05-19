@@ -5,22 +5,21 @@ class Corectl < Formula
   version "3.1.19"
   license "MIT"
   
-  # 根据架构动态构建 URL
   if Hardware::CPU.intel?
-    arch = "amd64"
+    url "https://github.com/xs23933/core/releases/download/v3.1.19/corectl_amd64"
+    sha256 "ceb9641221444e373c5ab0ec4d79033517432be8337238edf567be644ba3b2a2"
   elsif Hardware::CPU.arm?
-    arch = "arm64"
-  end
-  
-  url "https://github.com/xs23933/core/releases/download/v#{version}/corectl_#{arch}"
-  sha256 if Hardware::CPU.intel?
-    "ceb9641221444e373c5ab0ec4d79033517432be8337238edf567be644ba3b2a2"
-  elsif Hardware::CPU.arm?
-    "c36694be23572ffe456d1cb3620b9fc2a8ab084cf8e71eae66afabae0e5183bc"
+    url "https://github.com/xs23933/core/releases/download/v3.1.19/corectl_arm64"
+    sha256 "c36694be23572ffe456d1cb3620b9fc2a8ab084cf8e71eae66afabae0e5183bc"
   end
   
   def install
-    bin.install "corectl_#{Hardware::CPU.arch}" => "corectl"
+    # 根据架构使用正确的源文件名
+    if Hardware::CPU.intel?
+      bin.install "corectl_amd64" => "corectl"
+    elsif Hardware::CPU.arm?
+      bin.install "corectl_arm64" => "corectl"
+    end
   end
   
   test do
